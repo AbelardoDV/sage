@@ -1,0 +1,39 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Uploader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <!-- CSS only -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="{% static 'dashboard/style.css' %}">
+
+</head>
+
+<body>
+
+  <!-- Begin page content -->
+  <main role="main" class="container">
+    <h1>Subida de archivos</h1>
+    <p class="lead">Suba los archivos csv con los nombres por defecto.</p>
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <span class="text-muted">No olvide que los archivos sql necesitan un archivo fijo</span>
+    </div>
+  </footer>
+
+
+</body>
+
+</html>
