@@ -13,9 +13,11 @@ def simple_upload_view(request):
     loc='mysite/static/files/'
     loc_f='../static/files/'
     
+    files_static_folder=os.path.dirname(os.path.abspath(loc))
+    print(files_static_folder)
     
     #################
-    path = Path(r"D:\\eica\\covid\\sage\\mysite\\static\\files")
+    path = Path(r'{}\\files\\'.format(files_static_folder))
     files_in_path = path.iterdir()
     list_files=[]
     for item in files_in_path:
