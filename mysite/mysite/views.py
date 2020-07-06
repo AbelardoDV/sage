@@ -5,24 +5,24 @@ from django.core.files.storage import FileSystemStorage
 from .models import ArchivosCSV
 import os
 from django.template import RequestContext
+from pathlib import Path
 
 def simple_upload_view(request):
 
-    path = os.path.dirname(os.path.abspath(__file__))
+    
     loc='mysite/static/files/'
     loc_f='../static/files/'
-    # myfiles = os.path.join(path, loc)
-    # os.chdir(myfiles)
-    # x = 0
-    # d = {}
-    # for file in os.listdir("."):
-    #     d[x] = (myfiles + file)
-    #     x = x + 1
+    
+    
+    #################
+    path = Path(r"D:\\eica\\covid\\sage\\mysite\\static\\files")
+    files_in_path = path.iterdir()
+    list_files=[]
+    for item in files_in_path:
+        if item.is_file():
+            list_files.append(item.name)
 
-    # variables = RequestContext(request, {
-    # 'user' : request.user,
-    # 'filedict' : d,
-    # })
+    #################
 
 
     if request.method == 'POST' and request.FILES['myfile']:

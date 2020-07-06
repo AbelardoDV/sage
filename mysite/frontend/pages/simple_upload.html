@@ -3,20 +3,43 @@
 {% load static %}
 
 {% block content %}
-<form method="post" enctype="multipart/form-data">
-  {% csrf_token %}
-  <input type="file" name="myfile">
-  <button type="submit">Upload</button>
-</form>
+<div class="container p-3 my-3 border">
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="container">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+        </div>
+        <div class="custom-file">
+          <input type="file" name="myfile" class="custom-file-input" id="inputGroupFile01"
+            aria-describedby="inputGroupFileAddon01">
+          <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+        </div>
+      </div>
+      <br>
+      <br>
+      
+      <button type="submit"  class="btn btn-primary float-right">Upload</button>
+      <br>
+      <br>
+    </div>
+  </form>
+</div>
 
+<div class="container">
+  {% if uploaded_file_url %}
+  <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
+  {% endif %}
 
-
-{% if uploaded_file_url %}
-<p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
-{% endif %}
-
-{% for file in filelist %}
-  {{ file }}
-{% endfor %}
-
+  <p></p>
+  <ul class="list-group"></ul>
+  <li class="list-group-item active">Lista de archivos subidos</li>
+  {% for file in list_files %}
+  <li class="list-group-item">
+    <a href="../static/files/{{file}}">{{ file }}</a>
+  </li>
+  {% endfor %}
+  </ul>
+</div>
 {% endblock %}
