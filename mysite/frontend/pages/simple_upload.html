@@ -3,10 +3,16 @@
 {% load static %}
 
 {% block content %}
+<div class="d-flex justify-content-center">
+<button id="crear_4g" class="btn btn-primary ">Crear 4g</button>
+</div>
+
 <div class="container p-3 my-3 border">
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
+    
     <div class="container">
+      
       <div class="input-group">
         <div class="input-group-prepend">
           <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
@@ -42,4 +48,15 @@
   {% endfor %}
   </ul>
 </div>
+{% endblock %}
+
+{% block javascript %}
+
+<script type = "text/JavaScript">
+$('#crear_4g').click(function(){
+  $.get("../polls/crear_4g/", function(data, status){
+    console.log("Hola Mundo: " + status);
+  });
+});
+</script>
 {% endblock %}
