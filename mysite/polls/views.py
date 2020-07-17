@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Webcell4G
+from .models import Adyacencias3G
 import psycopg2
 # Create your views here.
 
@@ -12,9 +13,72 @@ pwd = "nemuuser"
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
+def dibujar_3g_adj(request):
+    Adyacencias3G.objects.all().delete()
+    conn = psycopg2.connect(host=host,
+                                database=database,
+                                user=user,
+                                password=pwd,
+                                port="5432")
+    c = conn.cursor()
+    query = [''' COPY adyacencias_3g(source_id,target_id) 
+FROM 'D:\Proyecto_Visualizacion_PostgreSQL\Web_Adyacencias3G_PostGreSQL.csv' DELIMITER ',' CSV HEADER;'''
 
-def crear_4g_view(request):
-    Webcell4G.objects.using('spatial').all().delete()
+, 
+''' with diagramas as (SELECT webcell_3g.rncid as source_rncid,
+				webcell_3g.lat_site as source_lat,
+				webcell_3g.lon_site as source_lon,
+				webcell_3g.prach_km as source_prach,
+				webcell_3g.az as source_az,
+				webcell_3g.rd as source_rd,
+				adyacencias_3g.source_id as source_id, 
+				adyacencias_3g.target_id as target_id,
+				webcell_3g_1.rncid as target_rncid,
+				webcell_3g_1.lat_site as target_lat,
+				webcell_3g_1.lon_site as target_lon,
+				webcell_3g_1.prach_km as target_prach,
+				webcell_3g_1.az as target_az,
+				webcell_3g_1.rd as target_rd
+FROM WebCell_3G AS webcell_3g_1 INNER JOIN (webcell_3g INNER JOIN adyacencias_3g 
+											ON webcell_3g.LcrId = adyacencias_3g.source_id) 
+	ON webcell_3g_1.LcrId = adyacencias_3g.target_id
+GROUP BY  		webcell_3g.rncid,
+				webcell_3g.lat_site,
+				webcell_3g.lon_site,
+				webcell_3g.prach_km,
+				webcell_3g.az,
+				webcell_3g.rd,
+				adyacencias_3g.source_id,
+				adyacencias_3g.target_id,
+				webcell_3g_1.rncid,
+				webcell_3g_1.lat_site,
+				webcell_3g_1.lon_site,
+				webcell_3g_1.prach_km,
+				webcell_3g_1.az,
+				webcell_3g_1.rd
+				
+			   ) 
+	
+        UPDATE adyacencias_3g 
+        SET linea=ST_MAKELINE(array[st_project( ST_SETSRID(ST_POINT(source_lon, source_lat), 4326),source_rd*1000,radians(source_az))::geometry ,
+                                st_project( ST_SETSRID(ST_POINT(target_lon, target_lat), 4326),target_rd*1000,radians(target_az))::geometry])
+        ,source_rncid=diagramas.source_rncid
+        ,target_rncid=diagramas.target_rncid
+        from diagramas
+        WHERE adyacencias_3g.source_id=diagramas.source_id AND adyacencias_3g.target_id=diagramas.target_id
+        ;''']
+    for m in range(len(query)):
+        print(query[m])
+        c.execute(query[m], vars=None)
+        conn.commit()
+
+    conn.close()
+
+    return HttpResponse('ok', content_type='text/plain')
+
+
+def dibujar_lncel(request):
+    Webcell4G.objects.all().delete()
     conn = psycopg2.connect(host=host,
                             database=database,
                             user=user,
@@ -25,8 +89,11 @@ def crear_4g_view(request):
 
 
     c = conn.cursor()
-    query = [''' COPY webcell_4g(DL_CH,SiteName,CellName,LAT_SITE,LON_SITE,AZ,BW,RD,RD_normal,separar,MME,MME_ID,lnBtsId,Cell_Id,TE,TM,ALT,PCI,TAC,RAC,rootSeqIndex,AdminCellState,E_UTRAN_Avg_PRB_usage_per_TTI_DL,E_UTRAN_avg_IP_sched_thp_DL_QCI9,Average_CQI,Avg_UE_distance,distrito,refarming) 
-FROM 'D:\Proyecto_Visualizacion_PostgreSQL\WebCell_4G.csv' DELIMITER ',' CSV HEADER;''', '''with celdas as ( -- Creates a temporary table called cells with the following query as its data
+    query = ['DELETE FROM webcell_4g WHERE 1=1',''' COPY webcell_4g(DL_CH,SiteName,CellName,LAT_SITE,LON_SITE,AZ,BW,RD,RD_normal,separar,MME,MME_ID,lnBtsId,Cell_Id,TE,TM,ALT,PCI,TAC,RAC,rootSeqIndex,AdminCellState,E_UTRAN_Avg_PRB_usage_per_TTI_DL,E_UTRAN_avg_IP_sched_thp_DL_QCI9,Average_CQI,Avg_UE_distance,distrito,refarming,cambiopcidinamico) 
+FROM '{}' DELIMITER ',' CSV HEADER;'''.format("D:\SharkTank\ManagementPlatform\mysite\static\\files\WebCell_4G.csv")
+
+, 
+'''with celdas as ( -- Creates a temporary table called cells with the following query as its data
         select cell_id,lon_site,lat_site,az,bw,RD_normal,
             st_setsrid(st_point(lon_site, lat_site), 4326) as center,
             -- Projects the coordinate in 10_000 meters in the azimuth + (h_beam_width / 2) direction

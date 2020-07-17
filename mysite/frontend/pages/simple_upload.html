@@ -4,7 +4,13 @@
 
 {% block content %}
 <div class="d-flex justify-content-center">
-<button id="crear_4g" class="btn btn-primary ">Crear 4g</button>
+<button id="dibujar_lncel" class="btn btn-info">
+  <span id="dibujar_lncel_loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+  Dibujar LNCEL (requiere: WebCell4g.csv)</button>
+<button id="dibujar_3g_adj" class="btn btn-warning ">
+  <span id="dibujar_3g_adj_loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+  Dibujar 3G ADJ (requiere: 3gADJ.csv)</button>
+
 </div>
 
 <div class="container p-3 my-3 border">
@@ -13,15 +19,9 @@
     
     <div class="container">
       
-      <div class="input-group">
-        <div class="input-group-prepend">
-          <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
-        </div>
-        <div class="custom-file">
-          <input type="file" name="myfile" class="custom-file-input" id="inputGroupFile01"
-            aria-describedby="inputGroupFileAddon01">
-          <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
-        </div>
+      <div class="custom-file">
+        <input type="file" name="myfile" class="custom-file-input" id="customFileLang" lang="es">
+        <label class="custom-file-label" for="customFileLang">Seleccionar CSV</label>
       </div>
       <br>
       <br>
@@ -53,10 +53,24 @@
 {% block javascript %}
 
 <script type = "text/JavaScript">
-$('#crear_4g').click(function(){
-  $.get("../polls/crear_4g/", function(data, status){
-    console.log("Hola Mundo: " + status);
+$("#dibujar_lncel_loading").hide();
+$("#dibujar_3g_adj_loading").hide();
+
+$('#dibujar_lncel').click(function(){
+  $("#dibujar_lncel_loading").show();
+  $.get("../polls/dibujar_lncel/", function(data, status){
+    alert("Status: " + status);
+    $("#dibujar_lncel_loading").hide();
   });
+});
+
+$('#dibujar_3g_adj').click(function(){
+  $("#dibujar_3g_adj_loading").show();
+  $.get("../polls/dibujar_3g_adj/", function(data, status){
+    alert("Status: " + status);
+    $("#dibujar_3g_adj_loading").hide();
+  });
+ 
 });
 </script>
 {% endblock %}

@@ -1,10 +1,15 @@
 from django.shortcuts import render
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
-
+from django.http import HttpResponse
 import os
 from django.template import RequestContext
 from pathlib import Path
+
+def index(request):
+    return render(request, 'pages/index.html', locals())
+
+
 
 def simple_upload_view(request):
 

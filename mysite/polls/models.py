@@ -18,10 +18,23 @@ class Choice(models.Model):
     def __str__(self):
         return self.choice_text
 
+class Adyacencias3G(models.Model):
+    id = models.AutoField(primary_key=True)
+    source_rncid = models.IntegerField(blank=True, null=True)
+    source_id = models.IntegerField(blank=True, null=True)
+    target_rncid = models.IntegerField(blank=True, null=True)
+    target_id = models.IntegerField(blank=True, null=True)
+    linea = models.TextField(blank=True, null=True)  # This field type is a guess.
 
-
+    class Meta:
+        managed = False
+        db_table = 'adyacencias_3g'
+    def __str__(self):
+        return str(self.source_id) + "|"+ str(self.target_id)
+    
 
 class Webcell4G(models.Model):
+
     id = models.AutoField(primary_key=True)
     dl_ch = models.SmallIntegerField(blank=True, null=True)
     sitename = models.TextField(blank=True, null=True)
@@ -51,8 +64,16 @@ class Webcell4G(models.Model):
     avg_ue_distance = models.FloatField(blank=True, null=True)
     distrito = models.TextField(blank=True, null=True)
     refarming = models.TextField(blank=True, null=True)
+    cambiopcidinamico =models.IntegerField(blank=True, null=True)
     sector = models.TextField(blank=True, null=True)  # This field type is a guess.
 
     class Meta:
         managed = True
         db_table = 'webcell_4g'
+
+
+
+    def __str__(self):
+        return self.cellname
+    
+
