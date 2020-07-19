@@ -10,6 +10,10 @@ def index(request):
     return render(request, 'pages/index.html', locals())
 
 
+def mapper_view(request):
+
+    return render(request, 'pages/mapper_view.html', locals())
+
 
 def simple_upload_view(request):
 

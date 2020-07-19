@@ -1,9 +1,10 @@
 from django.contrib import admin
 from .models import Webcell4G
 from .models import Adyacencias3G
+from leaflet.admin import LeafletGeoAdmin
 # Register your models here.
 
-class webcell4gadmin(admin.ModelAdmin):
+class webcell4gadmin(LeafletGeoAdmin):
     search_fields = ('cellname',)
     pass
 admin.site.register(Webcell4G,webcell4gadmin)

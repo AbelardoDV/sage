@@ -1,58 +1,114 @@
 {% extends 'pages/base.html' %}
-
 {% load static %}
 
 {% block content %}
-<div class="d-flex justify-content-center">
-<button id="dibujar_lncel" class="btn btn-info">
-  <span id="dibujar_lncel_loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-  Dibujar LNCEL (requiere: WebCell4g.csv)</button>
-<button id="dibujar_3g_adj" class="btn btn-warning ">
-  <span id="dibujar_3g_adj_loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-  Dibujar 3G ADJ (requiere: 3gADJ.csv)</button>
+<div class="row x_panel" style="display: inline-block;">
 
-</div>
+  <div class="col-md-6 col-sm-6 ">
+    <div class="container p-3 my-3 border">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
 
-<div class="container p-3 my-3 border">
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    
-    <div class="container">
-      
-      <div class="custom-file">
-        <input type="file" name="myfile" class="custom-file-input" id="customFileLang" lang="es">
-        <label class="custom-file-label" for="customFileLang">Seleccionar CSV</label>
-      </div>
-      <br>
-      <br>
-      
-      <button type="submit"  class="btn btn-primary float-right">Subir al servidor</button>
-      <br>
-      <br>
+        <div class="container">
+
+          <div class="custom-file">
+            <input type="file" name="myfile" class="custom-file-input" id="customFileLang" lang="en">
+            <label class="custom-file-label" for="customFileLang">Browse in your PC</label>
+          </div>
+          <br>
+          <br>
+
+          <button type="submit" class="btn btn-primary float-right">Upload</button>
+          <br>
+          <br>
+        </div>
+      </form>
     </div>
-  </form>
-</div>
 
-<div class="container">
-  {% if uploaded_file_url %}
-  <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
-  {% endif %}
+    <div class="container">
+      {% if uploaded_file_url %}
+      <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
+      {% endif %}
 
-  <p></p>
-  <ul class="list-group"></ul>
-  <li class="list-group-item active">Lista de archivos subidos</li>
-  {% for file in list_files %}
-  <li class="list-group-item">
-    <a href="../static/files/{{file}}">{{ file }}</a>
-  </li>
-  {% endfor %}
-  </ul>
+      <p></p>
+      <ul class="list-group"></ul>
+      <li class="list-group-item active">Uploaded Files</li>
+      {% for file in list_files %}
+      <li class="list-group-item">
+        <a href="../static/files/{{file}}">{{ file }}</a>
+      </li>
+      {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="col-md-6 col-sm-6">
+    <div class="row">
+      <div class="col-4">
+        <h3> LTE (4G)</h3>
+
+        <button id="dibujar_lncel" class="btn btn-success">
+          <span id="dibujar_lncel_loading" class="spinner-border spinner-border-sm" role="status"
+            aria-hidden="true"></span>
+          Draw LNCEL (WebCell4g.csv)</button>
+
+        <button id="dibujar_3g_adj" class="btn btn-success ">
+          <span id="dibujar_3g_adj_loading" class="spinner-border spinner-border-sm" role="status"
+            aria-hidden="true"></span>
+          Draw 4G_ADJ (3gADJ.csv)</button>
+
+
+        <button id="dibujar_3g_adj" class="btn btn-success ">
+          <span id="dibujar_3g_adj_loading" class="spinner-border spinner-border-sm" role="status"
+            aria-hidden="true"></span>
+          Draw 4G_TA (3gADJ.csv)</button>
+
+
+      </div>
+      <div class="col-4">
+        <h3> WCDMA (3G)</h3>
+        <button id="dibujar_3g_adj" class="btn btn-info ">
+          <span id="dibujar_3g_adj_loading" class="spinner-border spinner-border-sm" role="status"
+            aria-hidden="true"></span>
+          Draw WCEL (WebCell3g.csv)</button>
+        <button id="dibujar_3g_adj" class="btn btn-info ">
+          <span id="dibujar_3g_adj_loading" class="spinner-border spinner-border-sm" role="status"
+            aria-hidden="true"></span>
+          Draw 3G_ADJ (3gADJ.csv)</button>
+        <button id="dibujar_3g_adj" class="btn btn-info ">
+          <span id="dibujar_3g_adj_loading" class="spinner-border spinner-border-sm" role="status"
+            aria-hidden="true"></span>
+          Draw 3G_TA (3gADJ.csv)</button>
+      </div>
+      <div class="col-4">
+        <h3> GSM (2G)</h3>
+        <button id="dibujar_3g_adj" class="btn btn-secondary ">
+          <span id="dibujar_3g_adj_loading" class="spinner-border spinner-border-sm" role="status"
+            aria-hidden="true"></span>
+          Draw BTS (3gADJ.csv)</button>
+        <button id="dibujar_3g_adj" class="btn btn-secondary ">
+          <span id="dibujar_3g_adj_loading" class="spinner-border spinner-border-sm" role="status"
+            aria-hidden="true"></span>
+          Draw 2G_ADJ (3gADJ.csv)</button>
+        <button id="dibujar_3g_adj" class="btn btn-secondary ">
+          <span id="dibujar_3g_adj_loading" class="spinner-border spinner-border-sm" role="status"
+            aria-hidden="true"></span>
+          Draw 2G_TA (3gADJ.csv)</button>
+
+      </div>
+
+
+
+
+
+    </div>
+  </div>
 </div>
 {% endblock %}
 
 {% block javascript %}
 
-<script type = "text/JavaScript">
+<script type="text/JavaScript">
 $("#dibujar_lncel_loading").hide();
 $("#dibujar_3g_adj_loading").hide();
 
@@ -73,4 +129,9 @@ $('#dibujar_3g_adj').click(function(){
  
 });
 </script>
+
+
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
+
 {% endblock %}

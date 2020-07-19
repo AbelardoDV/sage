@@ -24,7 +24,8 @@ from .views import *
 urlpatterns = [
     path('polls/', include('polls.urls')),
     path('admin/', admin.site.urls),
-    path('pages/', simple_upload_view,name='simple_upload'),
+    path('upload/', simple_upload_view,name='upload_csv'),
+    path('mapper_view/',mapper_view,name='mapper_view'),
     path('', index, name='index'),
 
 ]+static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

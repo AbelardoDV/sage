@@ -1,0 +1,270 @@
+{% extends 'pages/base.html' %}
+{% load static %}
+{% load leaflet_tags %}
+
+
+
+{% block head %}
+
+<!--Draw-->
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+    crossorigin="" />
+<!-- Make sure you put this AFTER Leaflet's CSS -->
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+    crossorigin=""></script>
+
+<!-- Mouse position-->
+<link rel="stylesheet" href="{% static 'libs/L.Control.MousePosition.css' %}" />
+<script src="{% static 'libs/L.Control.MousePosition.js' %}"></script>
+
+<!-- GeoCoder-->
+<link rel="stylesheet" href="{% static 'libs/Control.OSMGeocoder.css' %}" />
+<script src="{% static 'libs/Control.OSMGeocoder.js' %}"></script>
+
+
+<!-- Navigation Bar-->
+<link rel="stylesheet" href="{% static 'libs/NavBar/NavBar.css' %}" />
+<script src="{% static 'libs/NavBar/NavBar.js' %}"></script>
+
+
+<!-- Slide menu-->
+<link rel="stylesheet" href="{% static 'libs/slide_menu/SlideMenu.css' %}" />
+<script src="{% static 'libs/slide_menu/SlideMenu.js' %}"></script>
+
+<!-- Draw-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
+
+
+<!-- Get Feature-->
+<script src="{% static 'libs/leaflet.wms.js' %}"></script>
+
+
+<style type="text/css">
+    #map {
+        width: 100%;
+        height: 600px;
+    }
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+<div class="row x_panel" style="display: inline-block;">
+    <h3>Cell Mapper</h3>
+    <div id="map"></div>
+
+
+
+
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+    ///// Base Map
+    var OpenStreetMap = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+    var WorldImagery = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
+
+
+
+    ///// Map configuration
+    var map = L.map('map', {
+        layers: [OpenStreetMap], /// Base Map
+        center: [-12.04318, -77.02824],
+        zoom: 12,
+        crs: L.CRS.EPSG4326
+    });
+
+    /////layers de base		
+    var baseLayers = {
+        "Open Street Map": OpenStreetMap,
+        "World Imagery": WorldImagery
+    };
+
+
+    //------------Adding from Geoserver (format WMS)
+
+    var webcell_3g_wms = L.tileLayer.wms('http://localhost:8080/geoserver/sage/wms', {
+        layers: 'webcell_3g:webcell_3g',
+        transparent: true,
+        format: 'image/png'
+    }).addTo(map);
+
+    var webcell_4g_wms = L.tileLayer.wms('http://localhost:8080/geoserver/sage/wms', {
+        layers: 'webcell_4g:webcell_4g',
+        transparent: true,
+        format: 'image/png',
+        attribution: true
+    }).addTo(map);
+
+
+    ///// Groupe layers
+    var overlays = {
+        "webcell_4g": webcell_4g_wms,
+        "webcell_3g": webcell_3g_wms,
+    };
+
+    //Ajax to retrieve data from Django
+    // var dataurl = '{% url "geojson_webcell_4g" %}';
+    // $.getJSON(dataurl, function (data) {
+    //       L.geoJson(data).addTo(map);
+    // });
+
+
+
+    //// Add the Find to the map 
+    // var osmGeocoder = new L.Control.OSMGeocoder();
+    // map.addControl(osmGeocoder);
+
+    ///// Add the Navigation Bar to the map 
+    L.control.navbar({ position: 'topleft' }).addTo(map);
+
+
+    ///// Ajout des couches de base + couches geoserver
+    L.control.layers(baseLayers, overlays).addTo(map);
+
+    ///// Add the mouse position to the map 
+    L.control.mousePosition().addTo(map);
+
+
+    /////////// slide menu Webcell_3g
+    var div = L.DomUtil.create('div', 'info-legend');
+    var titre1 = 'webcell_3g';
+    contents1 = div.innerHTML = '<br><img src="http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=sage:webcell_3g" </img><br>';
+
+    var titre2 = 'webcell_4g';
+    contents2 = div.innerHTML = '<br><img src="http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=sage:webcell_4g" </img><br>';
+
+    var slideMenu = L.control.slideMenu('', { position: 'topright', delay: '5' }).addTo(map);
+    slideMenu.setContents(titre1 + contents1 + titre2 + contents2);
+
+
+
+
+    ///// Add the draw feature to the map
+    var drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
+
+    ///// config draw feature
+    var drawControl = new L.Control.Draw({
+        position: 'topleft',
+        draw: {
+            polygon: {
+                shapeOptions: { color: 'purple' },
+                allowIntersection: false,
+                drawError: { color: 'orange', timeout: 1000 },
+                showArea: true,
+                metric: false,
+                repeatMode: true
+            },
+            polyline: {
+                shapeOptions: { color: 'red' },
+            },
+            rect: {
+                shapeOptions: { color: 'green' },
+            },
+            circle: {
+                shapeOptions: { color: 'steelblue' },
+            },
+            marker: true
+        },
+        edit: {
+            featureGroup: drawnItems,
+            remove: true
+        }
+    });
+    map.addControl(drawControl);
+    map.on('draw:created', function (e) {
+        var type = e.layerType,
+            layer = e.layer;
+        drawnItems.addLayer(layer);
+    });
+
+    map.addEventListener('click', onMapClick);
+    popup = new L.Popup({ maxWidth: 1000 });
+    function onMapClick(e) {
+        var latlngStr = '(' + e.latlng.lat.toFixed(3) + ', ' + e.latlng.lng.toFixed(3) + ')';
+        // var BBOX = map.getBounds()._southWest.lng + "," + map.getBounds()._southWest.lat + "," + map.getBounds()._northEast.lon + ","
+        //     + map.getBounds()._northEast.lat;
+
+        var BBOX = map.getBounds().toBBoxString();
+        var WIDTH = map.getSize().x;
+        var HEIGHT = map.getSize().y;
+        // var X = map.layerPointToContainerPoint(e.layerPoint).x;
+        // var Y = map.layerPointToContainerPoint(e.layerPoint).y;
+        var X = Math.trunc(e.containerPoint.x);
+        var Y = Math.trunc(e.containerPoint.y);
+        console.log("HolaMundo");
+        console.log('WIDTH:' + WIDTH);
+        console.log('HEIGHT:' + HEIGHT);
+        console.log('X:' + X);
+        console.log('Y' + Y);
+        console.log(e);
+        var URL = 'http://localhost:8080/geoserver/sage/wms?SERVICE=WMS&INFO_FORMAT=application/json&srs=EPSG%3A4326&VERSION=1.1.1&REQUEST=GetFeatureInfo&LAYERS=sage:webcell_4g&query_layers=sage:webcell_4g&WIDTH=' + WIDTH + '&HEIGHT=' + WIDTH + '&X=' + X + '&Y=' + Y + '&BBOX=' + BBOX;
+        popup.setLatLng(e.latlng);
+        var ajax = $.ajax({
+            url: URL,
+            dataType: 'json',
+            crossDomain: false,
+            jsonpCallback: 'getJson',
+            success: function (response) {
+                console.log(response);
+                popup.setContent("<b>nom_deriv:</b> " + response.features[0].properties.sitename)
+                //     "<br><b>cellname: </b>" + feature.properties.cellname +
+                //     "<br><b>tac: </b>" + feature.properties.tac +
+                //     "<br><b>rac: </b>" + feature.properties.rac +
+                //     "<br><b>rootseqindex: </b>" + feature.properties.rootseqindex +
+                //     "<br><b>admincellstate: </b>" + feature.properties.admincellstate +
+                //     "<br><b>pci: </b>" + feature.properties.pci
+                //     , popupOptions);
+            }
+        });
+
+        popup.setContent(URL);
+        map.openPopup(popup);
+    }
+
+    /// Popup Webcell_4g
+    // var owsrootUrl = 'http://localhost:8080/geoserver/sage/wms';
+    // var defaultParameters = {
+    //     service: 'WFS',
+    //     version: '2.0',
+    //     request: 'GetFeature',
+    //     typeName: 'sage:webcell_4g',
+    //     outputFormat: 'json',
+    //     format_options: 'callback:getJson',
+    //     SrsName: 'EPSG:4326'
+    // };
+    // var parameters = L.Util.extend(defaultParameters);
+    // var URL = owsrootUrl + L.Util.getParamString(parameters);
+    // var ajax = $.ajax({
+    //     url: URL,
+    //     dataType: 'json',
+    //     crossDomain: false,
+    //     jsonpCallback: 'getJson',
+    //     success: function (response) {
+    //         L.geoJson(response, {
+    //             onEachFeature: function (feature, url) {
+    //                 popupOptions = { maxWidth: 250 };
+    //                 url.bindPopup("<b>nom_deriv:</b> " + feature.properties.sitename +
+    //                     "<br><b>cellname: </b>" + feature.properties.cellname +
+    //                     "<br><b>tac: </b>" + feature.properties.tac +
+    //                     "<br><b>rac: </b>" + feature.properties.rac +
+    //                     "<br><b>rootseqindex: </b>" + feature.properties.rootseqindex +
+    //                     "<br><b>admincellstate: </b>" + feature.properties.admincellstate +
+    //                     "<br><b>pci: </b>" + feature.properties.pci
+    //                     , popupOptions);
+    //             }
+    //         }).addTo(map);
+    //     }
+    // });
+</script>
+
+
+<link type="application/javascript" href="{% static 'leaflet-ajax-gh-pages/leaflet.ajax.js' %}"> -->
+{% endblock %}

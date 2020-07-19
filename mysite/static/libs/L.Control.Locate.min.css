@@ -1,0 +1,11 @@
+.leaflet-control-locate a{
+	font-size:1.4em;
+	color:#444
+	}
+.leaflet-control-locate.active a{
+	color:red
+	}
+.leaflet-control-locate.active.following a{
+	color:#FC842
+	}
+

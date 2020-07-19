@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Webcell4G
 from .models import Adyacencias3G
+from django.core.serializers import serialize
 import psycopg2
 # Create your views here.
 
@@ -12,6 +13,11 @@ pwd = "nemuuser"
 
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
+
+def geojson_webcell_4g(request):
+    webcell_4g = serialize('geojson', Webcell4G.objects.all()[:12], fields=["sector"])
+    return HttpResponse(webcell_4g,content_type='json')
+
 
 def dibujar_3g_adj(request):
     Adyacencias3G.objects.all().delete()

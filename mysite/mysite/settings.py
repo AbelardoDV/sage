@@ -37,8 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'django.contrib.gis',
+    'django.contrib.gis',
     'polls.apps.PollsConfig',
+    'leaflet',
     'mysite',
     
 ]
@@ -81,7 +82,7 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'NAME': 'Practicando',
-        'ENGINE': 'django.db.backends.postgresql',        
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',        
         'USER': 'postgres',
         'PASSWORD': 'nemuuser',
         'HOST': 'localhost',
@@ -136,3 +137,20 @@ STATICFILES_DIRS = [
 
 
 os.environ["DJANGO_SETTINGS_MODULE"] = "mysite.settings"
+
+
+# leaflet Module
+LEAFLET_CONFIG = {
+    'DEFAULT_CENTER': (10.762622, 106.660172), #default center of your map
+    'DEFAULT_ZOOM': 14, #default zoom level
+    'MIN_ZOOM': 3,
+    'MAX_ZOOM': 22,
+    'SCALE': 'both',
+    'ATTRIBUTION_PRIFIX': 'tekson', #attribution of your map
+    'PLUGINS': {
+        'forms': {
+                'js': ['/static/leaflet_geocoder/geocoder.js', '/static/Leaflet_Coordinates/Leaflet.Coordinates-0.1.5.min.js', '/static/js_admin/leaflet_widget.js'],
+                'css': ['/static/leaflet_geocoder/geocoder.css', '/static/Leaflet_Coordinates/Leaflet.Coordinates-0.1.5.css'],
+        },
+    },
+}

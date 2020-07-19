@@ -1,5 +1,9 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.gis.db import models
+from django.db.models import Manager as GeoManager
+from leaflet.admin import LeafletGeoAdmin
+
 import datetime
 
 class Question(models.Model):
@@ -65,8 +69,8 @@ class Webcell4G(models.Model):
     distrito = models.TextField(blank=True, null=True)
     refarming = models.TextField(blank=True, null=True)
     cambiopcidinamico =models.IntegerField(blank=True, null=True)
-    sector = models.TextField(blank=True, null=True)  # This field type is a guess.
-
+    sector = models.PolygonField(srid=4326,blank=True, null=True)  # This field type is a guess.
+    objects = GeoManager()
     class Meta:
         managed = True
         db_table = 'webcell_4g'
