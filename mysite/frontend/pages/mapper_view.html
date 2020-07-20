@@ -55,7 +55,7 @@
 
 {% block content %}
 <div class="row x_panel" style="display: inline-block;">
-    <h3>Cell Mapper</h3>
+    <h3>Sage Mapper</h3>
     <div id="map"></div>
 
 
@@ -77,7 +77,7 @@
         layers: [OpenStreetMap], /// Base Map
         center: [-12.04318, -77.02824],
         zoom: 12,
-        crs: L.CRS.EPSG4326
+        // crs: L.CRS.EPSG4326
     });
 
     /////layers de base		
@@ -89,28 +89,37 @@
 
     //------------Adding from Geoserver (format WMS)
 
-    var webcell_3g_wms = L.tileLayer.wms('http://localhost:8080/geoserver/sage/wms', {
-        layers: 'webcell_3g:webcell_3g',
+    var sage_wcel_wms = L.tileLayer.wms('http://localhost:8080/geoserver/sage/wms', {
+        layers: 'sage_wcel:sage_wcel',
         transparent: true,
         format: 'image/png'
     }).addTo(map);
 
-    var webcell_4g_wms = L.tileLayer.wms('http://localhost:8080/geoserver/sage/wms', {
-        layers: 'webcell_4g:webcell_4g',
+    var sage_lncel_wms = L.tileLayer.wms('http://localhost:8080/geoserver/sage/wms', {
+        layers: 'sage_lncel:sage_lncel',
+        transparent: true,
+        format: 'image/png',
+        attribution: true
+    }).addTo(map);
+    
+    var sage_3gta_prach = L.tileLayer.wms('http://localhost:8080/geoserver/sage/wms', {
+        layers: 'sage_3gta_prach:sage_3gta_prach',
         transparent: true,
         format: 'image/png',
         attribution: true
     }).addTo(map);
 
 
-    ///// Groupe layers
+
+    ///// Group layers
     var overlays = {
-        "webcell_4g": webcell_4g_wms,
-        "webcell_3g": webcell_3g_wms,
+        "sage_lncel": sage_lncel_wms,
+        "sage_wcel": sage_wcel_wms,
+        "sage_3gta_prach": sage_3gta_prach,
     };
 
     //Ajax to retrieve data from Django
-    // var dataurl = '{% url "geojson_webcell_4g" %}';
+    // var dataurl = '{% url "geojson_sage_lncel" %}';
     // $.getJSON(dataurl, function (data) {
     //       L.geoJson(data).addTo(map);
     // });
@@ -132,13 +141,13 @@
     L.control.mousePosition().addTo(map);
 
 
-    /////////// slide menu Webcell_3g
+    /////////// slide menu sage_wcel
     var div = L.DomUtil.create('div', 'info-legend');
-    var titre1 = 'webcell_3g';
-    contents1 = div.innerHTML = '<br><img src="http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=sage:webcell_3g" </img><br>';
+    var titre1 = 'sage_wcel';
+    contents1 = div.innerHTML = '<br><img src="http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=sage:sage_wcel" </img><br>';
 
-    var titre2 = 'webcell_4g';
-    contents2 = div.innerHTML = '<br><img src="http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=sage:webcell_4g" </img><br>';
+    var titre2 = 'sage_lncel';
+    contents2 = div.innerHTML = '<br><img src="http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=sage:sage_lncel" </img><br>';
 
     var slideMenu = L.control.slideMenu('', { position: 'topright', delay: '5' }).addTo(map);
     slideMenu.setContents(titre1 + contents1 + titre2 + contents2);
@@ -188,24 +197,19 @@
     map.addEventListener('click', onMapClick);
     popup = new L.Popup({ maxWidth: 1000 });
     function onMapClick(e) {
-        var latlngStr = '(' + e.latlng.lat.toFixed(3) + ', ' + e.latlng.lng.toFixed(3) + ')';
-        // var BBOX = map.getBounds()._southWest.lng + "," + map.getBounds()._southWest.lat + "," + map.getBounds()._northEast.lon + ","
-        //     + map.getBounds()._northEast.lat;
-
         var BBOX = map.getBounds().toBBoxString();
         var WIDTH = map.getSize().x;
         var HEIGHT = map.getSize().y;
-        // var X = map.layerPointToContainerPoint(e.layerPoint).x;
-        // var Y = map.layerPointToContainerPoint(e.layerPoint).y;
-        var X = Math.trunc(e.containerPoint.x);
-        var Y = Math.trunc(e.containerPoint.y);
-        console.log("HolaMundo");
+        var X = Math.trunc(map.layerPointToContainerPoint(e.layerPoint).x);
+        var Y = Math.trunc(map.layerPointToContainerPoint(e.layerPoint).y);
+
         console.log('WIDTH:' + WIDTH);
         console.log('HEIGHT:' + HEIGHT);
         console.log('X:' + X);
-        console.log('Y' + Y);
-        console.log(e);
-        var URL = 'http://localhost:8080/geoserver/sage/wms?SERVICE=WMS&INFO_FORMAT=application/json&srs=EPSG%3A4326&VERSION=1.1.1&REQUEST=GetFeatureInfo&LAYERS=sage:webcell_4g&query_layers=sage:webcell_4g&WIDTH=' + WIDTH + '&HEIGHT=' + WIDTH + '&X=' + X + '&Y=' + Y + '&BBOX=' + BBOX;
+        console.log('Y:' + Y);
+        console.log("BBOX-LXXXXXX:" + BBOX);
+        var URL = 'http://localhost:8080/geoserver/sage/wms?SERVICE=WMS&feature_count=3&INFO_FORMAT=application/json&srs=EPSG%3A4326\
+        &VERSION=1.1.1&REQUEST=GetFeatureInfo&LAYERS=sage:sage_lncel&query_layers=sage:sage_lncel&WIDTH=' + WIDTH + '&HEIGHT=' + HEIGHT + '&X=' + X + '&Y=' + Y + '&BBOX=' + BBOX;
         popup.setLatLng(e.latlng);
         var ajax = $.ajax({
             url: URL,
@@ -213,29 +217,32 @@
             crossDomain: false,
             jsonpCallback: 'getJson',
             success: function (response) {
-                console.log(response);
-                popup.setContent("<b>nom_deriv:</b> " + response.features[0].properties.sitename)
-                //     "<br><b>cellname: </b>" + feature.properties.cellname +
-                //     "<br><b>tac: </b>" + feature.properties.tac +
-                //     "<br><b>rac: </b>" + feature.properties.rac +
-                //     "<br><b>rootseqindex: </b>" + feature.properties.rootseqindex +
-                //     "<br><b>admincellstate: </b>" + feature.properties.admincellstate +
-                //     "<br><b>pci: </b>" + feature.properties.pci
-                //     , popupOptions);
+                var lncel =response.features[response.features.length - 1].properties;
+                popup.setContent("<b>Name:</b> " + lncel.cellname +
+                    "<br><b>TAC: </b>" + lncel.tac +
+                    "<br><b>RAC: </b>" + lncel.rac +
+                    //     "<br><b>rootseqindex: </b>" + lncel.rootseqindex +
+                    "<br><b>Admincellstate: </b>" + lncel.admincellstate
+                    //     "<br><b>pci: </b>" + lncel.pci
+                    //     , popupOptions
+                );
+                map.openPopup(popup);
+            },
+
+            error: function (e) {
+                popup.setContent(e);
             }
         });
 
-        popup.setContent(URL);
-        map.openPopup(popup);
     }
 
-    /// Popup Webcell_4g
+    /// Popup sage_lncel
     // var owsrootUrl = 'http://localhost:8080/geoserver/sage/wms';
     // var defaultParameters = {
     //     service: 'WFS',
     //     version: '2.0',
     //     request: 'GetFeature',
-    //     typeName: 'sage:webcell_4g',
+    //     typeName: 'sage:sage_lncel',
     //     outputFormat: 'json',
     //     format_options: 'callback:getJson',
     //     SrsName: 'EPSG:4326'

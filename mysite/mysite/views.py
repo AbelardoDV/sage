@@ -15,6 +15,10 @@ def mapper_view(request):
     return render(request, 'pages/mapper_view.html', locals())
 
 
+def wbts_list_view(request):
+    return render(request, 'pages/wbts_list.html', locals())
+
+
 def simple_upload_view(request):
 
     

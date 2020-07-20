@@ -37,7 +37,7 @@ class Adyacencias3G(models.Model):
         return str(self.source_id) + "|"+ str(self.target_id)
     
 
-class Webcell4G(models.Model):
+class Sage_lncel(models.Model):
 
     id = models.AutoField(primary_key=True)
     dl_ch = models.SmallIntegerField(blank=True, null=True)
@@ -73,11 +73,80 @@ class Webcell4G(models.Model):
     objects = GeoManager()
     class Meta:
         managed = True
-        db_table = 'webcell_4g'
+        db_table = 'sage_lncel'
 
 
 
     def __str__(self):
         return self.cellname
-    
 
+
+class Sage_wcel(models.Model):
+    id = models.AutoField(primary_key=True)
+    uarfcn = models.SmallIntegerField(blank=True, null=True)
+    name = models.TextField(blank=True, null=True)
+    lat_site = models.FloatField(blank=True, null=True)
+    lon_site = models.FloatField(blank=True, null=True)
+    az = models.SmallIntegerField(blank=True, null=True)
+    bw = models.SmallIntegerField(blank=True, null=True)
+    rd = models.FloatField(blank=True, null=True)
+    expr1 = models.TextField(blank=True, null=True)
+    bsc_rnc_mme_name = models.TextField(blank=True, null=True)
+    rncid = models.IntegerField(blank=True, null=True)
+    wbtsid = models.IntegerField(blank=True, null=True)
+    lcrid = models.IntegerField(blank=True, null=True)
+    te = models.FloatField(blank=True, null=True)
+    tm = models.FloatField(blank=True, null=True)
+    alt = models.FloatField(blank=True, null=True)
+    priscrcode = models.IntegerField(blank=True, null=True)
+    lac = models.IntegerField(blank=True, null=True)
+    rac = models.IntegerField(blank=True, null=True)
+    rootseqindex = models.IntegerField(blank=True, null=True)
+    admincellstate = models.TextField(blank=True, null=True)
+    wcelstate = models.IntegerField(blank=True, null=True)
+    sector = models.PolygonField(srid=4326,blank=True, null=True)  # This field type is a guess.
+    objects = GeoManager()
+    class Meta:
+        managed = True
+        db_table = 'sage_wcel'
+
+
+
+    def __str__(self):
+        return self.name
+
+
+class Sage_bts(models.Model):
+    id = models.AutoField(primary_key=True)
+    band = models.IntegerField(blank=True, null=True)
+    cellname = models.TextField(blank=True, null=True)
+    lat_site = models.FloatField(blank=True, null=True)
+    lon_site = models.FloatField(blank=True, null=True)
+    az = models.SmallIntegerField(blank=True, null=True)
+    bw = models.SmallIntegerField(blank=True, null=True)
+    rd = models.FloatField(blank=True, null=True)
+    cell_id = models.IntegerField(blank=True, null=True)
+    bscid = models.IntegerField(blank=True, null=True)
+    bsc_name = models.TextField(blank=True, null=True)
+    bcfid = models.IntegerField(blank=True, null=True)
+    btsid = models.IntegerField(blank=True, null=True)
+    trxid = models.SmallIntegerField(blank=True, null=True)
+    initialfreq = models.IntegerField(blank=True, null=True)
+    preferredbcch = models.SmallIntegerField(blank=True, null=True)
+    status = models.TextField(blank=True, null=True)
+    hoppingsequencenumber1 = models.SmallIntegerField(blank=True, null=True)
+    bsidentitycodebcc = models.SmallIntegerField(blank=True, null=True)
+    bsidentitycodencc = models.SmallIntegerField(blank=True, null=True)
+    bts_state = models.SmallIntegerField(blank=True, null=True)
+    trx_state = models.SmallIntegerField(blank=True, null=True)
+    lac = models.IntegerField(blank=True, null=True)
+    rac = models.IntegerField(blank=True, null=True)
+    refarming = models.TextField(blank=True, null=True)
+    sector = models.PolygonField(blank=True, null=True)  # This field type is a guess.
+    objects = GeoManager()
+    class Meta:
+        managed = False
+        db_table = 'sage_bts'
+
+    def __str__(self):
+        return self.cellname

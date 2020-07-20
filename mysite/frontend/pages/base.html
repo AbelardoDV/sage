@@ -75,10 +75,11 @@
                                     </ul>
 
                                 </li>
-                                <li><a><i class="fa fa-magic"></i> Draw Cells <span
+                                <li><a><i class="fa fa-magic"></i> Uploader <span
                                             class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a href={% url 'upload_csv' %}>Upload CSV & Draw</a></li>
+                                        <li><a href={% url 'upload_kpis' %}>Upload KPIS</a></li>
                                     </ul>
                                 </li>
                                 <li><a><i class="fa fa-map-o"></i> Viewer <span class="fa fa-chevron-down"></span></a>
@@ -89,17 +90,14 @@
                                 <li><a><i class="fa fa-bar-chart-o"></i> KPIs <span
                                             class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
-                                        <li><a href="chartjs.html">Grafana</a></li>
+                                        <li><a href={% url 'wbts_list' %}>Wbts List</a></li>
                                     </ul>
                                 </li>
                                 <li><a><i class="fa fa-tasks"></i> Algorithms <span
                                             class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
-                                        <li><a href="chartjs.html">Get first Tier</a></li>
-                                        <li><a href="chartjs.html">Map a new Site</a></li>
-                                        <li><a href="chartjs.html">Generate ADJS</a></li>
-                                        <li><a href="chartjs.html">Generate ADJI</a></li>
-
+                                        <li><a href="chartjs.html">Create ADJS</a></li>
+                                        <li><a href="chartjs.html">Get first Ring</a></li>
                                     </ul>
                                 </li>
                             </ul>

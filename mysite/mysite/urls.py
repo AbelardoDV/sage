@@ -27,5 +27,8 @@ urlpatterns = [
     path('upload/', simple_upload_view,name='upload_csv'),
     path('mapper_view/',mapper_view,name='mapper_view'),
     path('', index, name='index'),
+    path('upload_kpis/',mapper_view,name='upload_kpis'),
+
+    path('wbts_list/',wbts_list_view,name='wbts_list')
 
 ]+static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

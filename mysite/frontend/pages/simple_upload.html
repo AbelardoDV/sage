@@ -47,60 +47,55 @@
       <div class="col-4">
         <h3> LTE (4G)</h3>
 
-        <button id="dibujar_lncel" class="btn btn-success">
-          <span id="dibujar_lncel_loading" class="spinner-border spinner-border-sm" role="status"
+        <button id="draw_lncel" class="btn btn-success">
+          <span id="draw_lncel_loading" class="spinner-border spinner-border-sm" role="status"
             aria-hidden="true"></span>
-          Draw LNCEL (WebCell4g.csv)</button>
+          Draw LNCEL (sage_lncel.csv)</button>
 
-        <button id="dibujar_3g_adj" class="btn btn-success ">
-          <span id="dibujar_3g_adj_loading" class="spinner-border spinner-border-sm" role="status"
+        <button id="draw_lnadj" class="btn btn-success " disabled>
+          <span id="draw_lnadj_loading" class="spinner-border spinner-border-sm" role="status"
             aria-hidden="true"></span>
-          Draw 4G_ADJ (3gADJ.csv)</button>
+          Draw 4G_ADJ (sage_lnadj.csv)</button>
 
 
-        <button id="dibujar_3g_adj" class="btn btn-success ">
-          <span id="dibujar_3g_adj_loading" class="spinner-border spinner-border-sm" role="status"
-            aria-hidden="true"></span>
-          Draw 4G_TA (3gADJ.csv)</button>
+        <button id="draw_4gta" class="btn btn-success " disabled> 
+          <span id="draw_4gta_loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          Draw 4G_TA (sage_4gta.csv)</button>
 
 
       </div>
       <div class="col-4">
         <h3> WCDMA (3G)</h3>
-        <button id="dibujar_3g_adj" class="btn btn-info ">
-          <span id="dibujar_3g_adj_loading" class="spinner-border spinner-border-sm" role="status"
+        <button id="draw_wcel" class="btn btn-info ">
+          <span id="draw_wcel_loading" class="spinner-border spinner-border-sm" role="status"
             aria-hidden="true"></span>
-          Draw WCEL (WebCell3g.csv)</button>
-        <button id="dibujar_3g_adj" class="btn btn-info ">
-          <span id="dibujar_3g_adj_loading" class="spinner-border spinner-border-sm" role="status"
+          Draw WCEL (sage_wcel.csv)</button>
+        <button id="draw_adj" class="btn btn-info " disabled>
+          <span id="draw_adj_loading" class="spinner-border spinner-border-sm" role="status"
             aria-hidden="true"></span>
-          Draw 3G_ADJ (3gADJ.csv)</button>
-        <button id="dibujar_3g_adj" class="btn btn-info ">
-          <span id="dibujar_3g_adj_loading" class="spinner-border spinner-border-sm" role="status"
+          Draw 3G_ADJ (sage_adj.csv)</button>
+        <button id="draw_3gta" class="btn btn-info ">
+          <span id="draw_3gta_loading" class="spinner-border spinner-border-sm" role="status"
             aria-hidden="true"></span>
-          Draw 3G_TA (3gADJ.csv)</button>
+          Draw 3G_TA (sage_3gta.csv)</button>
+          3G_TA needs WCEL
       </div>
       <div class="col-4">
         <h3> GSM (2G)</h3>
-        <button id="dibujar_3g_adj" class="btn btn-secondary ">
-          <span id="dibujar_3g_adj_loading" class="spinner-border spinner-border-sm" role="status"
+        <button id="draw_bts" class="btn btn-secondary ">
+          <span id="draw_bts_loading" class="spinner-border spinner-border-sm" role="status"
             aria-hidden="true"></span>
-          Draw BTS (3gADJ.csv)</button>
-        <button id="dibujar_3g_adj" class="btn btn-secondary ">
-          <span id="dibujar_3g_adj_loading" class="spinner-border spinner-border-sm" role="status"
+          Draw BTS (sage_2gbts.csv)</button>
+        <button id="draw_adce" class="btn btn-secondary " disabled>
+          <span id="draw_adce_loading" class="spinner-border spinner-border-sm" role="status"
             aria-hidden="true"></span>
-          Draw 2G_ADJ (3gADJ.csv)</button>
-        <button id="dibujar_3g_adj" class="btn btn-secondary ">
-          <span id="dibujar_3g_adj_loading" class="spinner-border spinner-border-sm" role="status"
+          Draw 2G_ADJ (sage_adce.csv)</button>
+        <button id="draw_2gta" class="btn btn-secondary " >
+          <span id="draw_2gta_loading" class="spinner-border spinner-border-sm" role="status"
             aria-hidden="true"></span>
-          Draw 2G_TA (3gADJ.csv)</button>
+          Draw 2G_TA (sage_2gta.csv)</button>
 
       </div>
-
-
-
-
-
     </div>
   </div>
 </div>
@@ -109,29 +104,116 @@
 {% block javascript %}
 
 <script type="text/JavaScript">
-$("#dibujar_lncel_loading").hide();
-$("#dibujar_3g_adj_loading").hide();
+$("#draw_lncel_loading").hide();
+$("#draw_lnadj_loading").hide();
+$("#draw_4gta_loading").hide();
 
-$('#dibujar_lncel').click(function(){
-  $("#dibujar_lncel_loading").show();
-  $.get("../polls/dibujar_lncel/", function(data, status){
-    alert("Status: " + status);
-    $("#dibujar_lncel_loading").hide();
-  });
+$("#draw_wcel_loading").hide();
+$("#draw_adj_loading").hide();
+$("#draw_3gta_loading").hide();
+
+$("#draw_bts_loading").hide();
+$("#draw_adce_loading").hide();
+$("#draw_2gta_loading").hide();
+
+$('#draw_lncel').click(function(){
+  $("#draw_lncel_loading").show();
+  $.ajax({
+        url: "../polls/draw_lncel/",
+        type: 'GET',
+        success: function(res) {
+            alert(res);
+            $("#draw_lncel_loading").hide();
+        },
+        error: function(xhr,textStatus,error){
+          alert(error);
+          $("#draw_lncel_loading").hide();
+        }
+    });
+});
+$('#draw_lnajd').click(function(){
+
 });
 
-$('#dibujar_3g_adj').click(function(){
-  $("#dibujar_3g_adj_loading").show();
-  $.get("../polls/dibujar_3g_adj/", function(data, status){
-    alert("Status: " + status);
-    $("#dibujar_3g_adj_loading").hide();
-  });
- 
+$('#draw_4gta').click(function(){
 });
+
+
+$('#draw_wcel').click(function(){
+  $("#draw_wcel_loading").show();
+  $.ajax({
+        url: "../polls/draw_wcel/",
+        type: 'GET',
+        success: function(res) {
+            alert(res);
+            $("#draw_wcel_loading").hide();
+        },
+        error: function(xhr,textStatus,error){
+          alert(error);
+          $("#draw_wcel_loading").hide();
+        }
+    });
+});
+$('#draw_adj').click(function(){
+
+});
+
+$('#draw_3gta').click(function(){ 
+  $("#draw_3gta_loading").show();
+  $.ajax({
+        url: "../polls/draw_3gta/",
+        type: 'GET',
+        success: function(res) {
+            alert(res);
+            $("#draw_3gta_loading").hide();
+        },
+        error: function(xhr,textStatus,error){
+          alert(error);
+          $("#draw_3gta_loading").hide();
+        }
+    });
+});
+
+$('#draw_bts').click(function(){
+  $("#draw_bts_loading").show();
+  $.ajax({
+        url: "../polls/draw_bts/",
+        type: 'GET',
+        success: function(res) {
+            alert(res);
+            $("#draw_bts_loading").hide();
+        },
+        error: function(xhr,textStatus,error){
+          alert(error);
+          $("#draw_bts_loading").hide();
+        }
+    });
+});
+$('#draw_adce').click(function(){
+
+});
+
+$('#draw_2gta').click(function(){
+  $("#draw_2gta_loading").show();
+  $.ajax({
+        url: "../polls/draw_2gta/",
+        type: 'GET',
+        success: function(res) {
+            alert(res);
+            $("#draw_2gta_loading").hide();
+        },
+        error: function(xhr,textStatus,error){
+          alert(error);
+          $("#draw_2gta_loading").hide();
+        }
+    });
+});
+
+
 </script>
 
 
-    <!-- MDB core JavaScript -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
 
 {% endblock %}
