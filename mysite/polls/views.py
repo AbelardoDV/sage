@@ -1,11 +1,22 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+
+from django.views.generic import ListView
+from django_tables2 import SingleTableView
+from .tables import SageSitesTable
+
+from django_filters.views import FilterView
+from django_tables2.views import SingleTableMixin
+
 from .models import Sage_lncel
 from .models import Sage_wcel
 from .models import Sage_bts
 from .models import Adyacencias3G
+from .models import SageSites
+from .models import SageSitesFilter
 from django.core.serializers import serialize
 import psycopg2
+
 # Create your views here.
 
 host = "localhost"
@@ -16,8 +27,18 @@ pwd = "nemuuser"
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
+
+class Get_tiers_view(SingleTableMixin,FilterView):
+	model = SageSites
+	table_class = SageSitesTable
+	template_name = 'pages/get_tiers.html'
+	filterset_class = SageSitesFilter
+	paginate_by  = 9
+
+
+
 def geojson_sage_lncel(request):
-    sage_lncel = serialize('geojson', Sage_lncel.objects.all()[:12], fields=["sector"])
+    sage_lncel = serialize('geojson', Sage_lncel.objects.all().filter(sitename='MICAELA_BASTIDAS_TUPAC_AMARU'), fields=["sector"])
     return HttpResponse(sage_lncel,content_type='json')
 
 

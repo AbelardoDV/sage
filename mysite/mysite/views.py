@@ -6,6 +6,7 @@ import os
 from django.template import RequestContext
 from pathlib import Path
 
+
 def index(request):
     return render(request, 'pages/index.html', locals())
 
@@ -17,6 +18,9 @@ def mapper_view(request):
 
 def wbts_list_view(request):
     return render(request, 'pages/wbts_list.html', locals())
+
+
+
 
 
 def simple_upload_view(request):

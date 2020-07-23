@@ -4,7 +4,7 @@
 {% block content %}
 <div class="row x_panel" style="display: inline-block;">
 
-  <div class="col-md-6 col-sm-6 ">
+  <div class="col-md-4 col-sm-4 ">
     <div class="container p-3 my-3 border">
       <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
@@ -42,10 +42,10 @@
     </div>
   </div>
 
-  <div class="col-md-6 col-sm-6">
+  <div class="col-md-8 col-sm-8">
     <div class="row">
-      <div class="col-4">
-        <h3> LTE (4G)</h3>
+      <div class="col-3 text-center">
+        <h3> LTE </h3>
 
         <button id="draw_lncel" class="btn btn-success">
           <span id="draw_lncel_loading" class="spinner-border spinner-border-sm" role="status"
@@ -64,8 +64,8 @@
 
 
       </div>
-      <div class="col-4">
-        <h3> WCDMA (3G)</h3>
+      <div class="col-3 text-center">
+        <h3> WCDMA </h3>
         <button id="draw_wcel" class="btn btn-info ">
           <span id="draw_wcel_loading" class="spinner-border spinner-border-sm" role="status"
             aria-hidden="true"></span>
@@ -80,8 +80,8 @@
           Draw 3G_TA (sage_3gta.csv)</button>
           3G_TA needs WCEL
       </div>
-      <div class="col-4">
-        <h3> GSM (2G)</h3>
+      <div class="col-3 text-center">
+        <h3> GSM </h3>
         <button id="draw_bts" class="btn btn-secondary ">
           <span id="draw_bts_loading" class="spinner-border spinner-border-sm" role="status"
             aria-hidden="true"></span>
@@ -95,6 +95,13 @@
             aria-hidden="true"></span>
           Draw 2G_TA (sage_2gta.csv)</button>
 
+      </div>
+      <div class="col-3 text-center">
+        <h3>  Sites </h3>
+        <button id="draw_bts" class="btn btn-secondary ">
+          <span id="draw_bts_loading" class="spinner-border spinner-border-sm" role="status"
+            aria-hidden="true"></span>
+          Draw Sites (sage_2gbts.csv)</button>
       </div>
     </div>
   </div>

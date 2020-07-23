@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 from .views import draw_lncel,draw_wcel,draw_3gta,draw_bts,draw_2gta,dibujar_3g_adj,geojson_sage_lncel
 
+from polls.views import Get_tiers_view
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -17,6 +18,6 @@ urlpatterns = [
     path('draw_2gta/',draw_2gta,name='draw_2gta'),
 
 
-
+    path('get_tiers/',Get_tiers_view.as_view(),name='get_tiers')
     
 ]

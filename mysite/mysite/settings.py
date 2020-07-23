@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     'polls.apps.PollsConfig',
     'leaflet',
     'mysite',
+    'django_tables2',
+    'django_filters',
+    'bootstrap4',
     
 ]
 
@@ -68,6 +71,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.request',
             ],
         },
     },

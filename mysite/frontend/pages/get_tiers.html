@@ -1,0 +1,73 @@
+{% extends 'pages/base.html' %}
+{% load static %}
+
+{% load render_table from django_tables2 %}
+{% load bootstrap4 %}
+
+{% load leaflet_tags %}
+
+{% block head %}
+
+<!--Draw-->
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+    crossorigin="" />
+<!-- Make sure you put this AFTER Leaflet's CSS -->
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+    crossorigin=""></script>
+
+<style type="text/css">
+    #map {
+        width: 100%;
+        height: 600px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+
+    <div class="col-6">
+
+        {% if filter %}
+        <form action="" method="get" class="form form-inline">
+            {% bootstrap_form filter.form layout='inline' %}
+            {% bootstrap_button 'filter' %}
+        </form>
+        {% endif %}
+        {% render_table table %}
+
+    </div>
+
+    <div class="col-6">
+
+        <h5>Sage Mapper</h5>
+        <div id="map"></div>
+    
+
+
+    </div>
+
+
+
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+
+    ///// Base Map
+    var OpenStreetMap = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+    var WorldImagery = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
+
+    ///// Map configuration
+    var map = L.map('map', {
+        layers: [OpenStreetMap], /// Base Map
+        center: [-12.04318, -77.02824],
+        zoom: 12,
+        // crs: L.CRS.EPSG4326
+    });
+</script>
+{% endblock %}

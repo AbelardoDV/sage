@@ -3,8 +3,12 @@ from django.utils import timezone
 from django.contrib.gis.db import models
 from django.db.models import Manager as GeoManager
 from leaflet.admin import LeafletGeoAdmin
+import django_filters
+
 
 import datetime
+
+
 
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
@@ -36,6 +40,8 @@ class Adyacencias3G(models.Model):
     def __str__(self):
         return str(self.source_id) + "|"+ str(self.target_id)
     
+
+
 
 class Sage_lncel(models.Model):
 
@@ -79,6 +85,32 @@ class Sage_lncel(models.Model):
 
     def __str__(self):
         return self.cellname
+
+
+
+class SageSites(models.Model):
+    id = models.AutoField(primary_key=True)
+    site_name = models.TextField(blank=True, null=True)
+    mrbts_id = models.IntegerField(blank=True, null=True)
+    lat_site = models.FloatField(blank=True, null=True)
+    lon_site = models.FloatField(blank=True, null=True)
+    codigounico = models.TextField(blank=True, null=True)
+    cluster = models.IntegerField(blank=True, null=True)
+    distrito = models.TextField(blank=True, null=True)
+    ubicacion = models.PointField(srid=4326, blank=True, null=True)
+    objects = GeoManager()
+    class Meta:
+        managed = True
+        db_table = 'sage_sites'
+
+    def url_first_tier(self):
+        return "/get_first_tier/"+self.site_name
+
+
+class SageSitesFilter (django_filters.FilterSet):
+    class Meta:
+            model = SageSites
+            fields = ['site_name',]
 
 
 class Sage_wcel(models.Model):

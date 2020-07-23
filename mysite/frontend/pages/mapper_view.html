@@ -119,10 +119,12 @@
     };
 
     //Ajax to retrieve data from Django
-    // var dataurl = '{% url "geojson_sage_lncel" %}';
-    // $.getJSON(dataurl, function (data) {
-    //       L.geoJson(data).addTo(map);
-    // });
+    var dataurl = '{% url "geojson_sage_lncel" %}';
+    $.getJSON(dataurl, function (data) {
+          L.geoJson(data).addTo(map);
+          map.fitBounds(L.geoJson(data).getBounds());
+          console.log(L.geoJson(data));
+    });
 
 
 
@@ -203,11 +205,6 @@
         var X = Math.trunc(map.layerPointToContainerPoint(e.layerPoint).x);
         var Y = Math.trunc(map.layerPointToContainerPoint(e.layerPoint).y);
 
-        console.log('WIDTH:' + WIDTH);
-        console.log('HEIGHT:' + HEIGHT);
-        console.log('X:' + X);
-        console.log('Y:' + Y);
-        console.log("BBOX-LXXXXXX:" + BBOX);
         var URL = 'http://localhost:8080/geoserver/sage/wms?SERVICE=WMS&feature_count=3&INFO_FORMAT=application/json&srs=EPSG%3A4326\
         &VERSION=1.1.1&REQUEST=GetFeatureInfo&LAYERS=sage:sage_lncel&query_layers=sage:sage_lncel&WIDTH=' + WIDTH + '&HEIGHT=' + HEIGHT + '&X=' + X + '&Y=' + Y + '&BBOX=' + BBOX;
         popup.setLatLng(e.latlng);
