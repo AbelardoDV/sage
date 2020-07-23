@@ -1,7 +1,7 @@
 from django.urls import path
 
 from . import views
-from .views import draw_lncel,draw_wcel,draw_3gta,draw_bts,draw_2gta,dibujar_3g_adj,geojson_sage_lncel
+from .views import draw_lncel,draw_wcel,draw_3gta,draw_bts,draw_2gta,dibujar_3g_adj,geojson_sage_lncel,geojson_first_tier
 
 from polls.views import Get_tiers_view
 
@@ -18,6 +18,9 @@ urlpatterns = [
     path('draw_2gta/',draw_2gta,name='draw_2gta'),
 
 
-    path('get_tiers/',Get_tiers_view.as_view(),name='get_tiers')
+    path('get_tiers/',Get_tiers_view.as_view(),name='get_tiers'),
+    path('geojson_first_tier/<str:site_same>',geojson_first_tier,name='geojson_first_tier' )
+
+
     
 ]

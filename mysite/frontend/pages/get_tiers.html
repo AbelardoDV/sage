@@ -45,7 +45,7 @@
 
         <h5>Sage Mapper</h5>
         <div id="map"></div>
-    
+
 
 
     </div>
@@ -69,5 +69,17 @@
         zoom: 12,
         // crs: L.CRS.EPSG4326
     });
+
+
+    function viewFirstTier(site_name){
+        //Ajax to retrieve data from Django
+        var dataurl = '../geojson_first_tier/' + site_name;
+        $.getJSON(dataurl, function (data) {
+            L.geoJson(data).addTo(map);
+            map.fitBounds(L.geoJson(data).getBounds());
+            console.log(data);
+        });
+
+    };
 </script>
 {% endblock %}

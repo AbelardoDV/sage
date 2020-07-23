@@ -14,6 +14,7 @@ from .models import Sage_bts
 from .models import Adyacencias3G
 from .models import SageSites
 from .models import SageSitesFilter
+from .models import SageVoronoiPolygons
 from django.core.serializers import serialize
 import psycopg2
 
@@ -24,37 +25,41 @@ database = "Practicando"
 user = "postgres"
 pwd = "nemuuser"
 
+
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
 
-class Get_tiers_view(SingleTableMixin,FilterView):
-	model = SageSites
-	table_class = SageSitesTable
-	template_name = 'pages/get_tiers.html'
-	filterset_class = SageSitesFilter
-	paginate_by  = 9
-
+class Get_tiers_view(SingleTableMixin, FilterView):
+    model = SageSites
+    table_class = SageSitesTable
+    template_name = 'pages/get_tiers.html'
+    filterset_class = SageSitesFilter
+    paginate_by = 9
 
 
 def geojson_sage_lncel(request):
     sage_lncel = serialize('geojson', Sage_lncel.objects.all().filter(sitename='MICAELA_BASTIDAS_TUPAC_AMARU'), fields=["sector"])
-    return HttpResponse(sage_lncel,content_type='json')
+    return HttpResponse(sage_lncel, content_type='json')
+
+
+def geojson_first_tier(request,site_same):
+	single_site_voronoi=SageVoronoiPolygons.objects.filter(site_name=site_same).values_list("poligonos")
+	json_first_tier = serialize('geojson',SageVoronoiPolygons.objects.filter(poligonos__intersects=single_site_voronoi),fields=["poligonos"])
+	return HttpResponse(json_first_tier,content_type="json")
 
 
 def dibujar_3g_adj(request):
     Adyacencias3G.objects.all().delete()
     conn = psycopg2.connect(host=host,
-                                database=database,
-                                user=user,
-                                password=pwd,
-                                port="5432")
+                            database=database,
+                            user=user,
+                            password=pwd,
+                            port="5432")
     c = conn.cursor()
     query = [''' COPY adyacencias_3g(source_id,target_id) 
-FROM 'D:\Proyecto_Visualizacion_PostgreSQL\Web_Adyacencias3G_PostGreSQL.csv' DELIMITER ',' CSV HEADER;'''
-
-, 
-''' with diagramas as (SELECT webcell_3g.rncid as source_rncid,
+FROM 'D:\Proyecto_Visualizacion_PostgreSQL\Web_Adyacencias3G_PostGreSQL.csv' DELIMITER ',' CSV HEADER;''',
+             ''' with diagramas as (SELECT webcell_3g.rncid as source_rncid,
 				webcell_3g.lat_site as source_lat,
 				webcell_3g.lon_site as source_lon,
 				webcell_3g.prach_km as source_prach,
@@ -114,10 +119,9 @@ def draw_lncel(request):
                             port="5432")
 
     c = conn.cursor()
-    query = ['DELETE FROM sage_lncel',''' COPY sage_lncel(DL_CH,SiteName,CellName,LAT_SITE,LON_SITE,AZ,BW,RD,RD_normal,separar,MME,MME_ID,lnBtsId,Cell_Id,TE,TM,ALT,PCI,TAC,RAC,rootSeqIndex,AdminCellState,E_UTRAN_Avg_PRB_usage_per_TTI_DL,E_UTRAN_avg_IP_sched_thp_DL_QCI9,Average_CQI,Avg_UE_distance,distrito,refarming,cambiopcidinamico) 
-FROM 'D:\SharkTank\ManagementPlatform\mysite\static\\files\sage_lncel.csv' DELIMITER ',' CSV HEADER;'''
-, 
-'''with celdas as ( -- Creates a temporary table called cells with the following query as its data
+    query = ['DELETE FROM sage_lncel', ''' COPY sage_lncel(DL_CH,SiteName,CellName,LAT_SITE,LON_SITE,AZ,BW,RD,RD_normal,separar,MME,MME_ID,lnBtsId,Cell_Id,TE,TM,ALT,PCI,TAC,RAC,rootSeqIndex,AdminCellState,E_UTRAN_Avg_PRB_usage_per_TTI_DL,E_UTRAN_avg_IP_sched_thp_DL_QCI9,Average_CQI,Avg_UE_distance,distrito,refarming,cambiopcidinamico) 
+FROM 'D:\SharkTank\ManagementPlatform\mysite\static\\files\sage_lncel.csv' DELIMITER ',' CSV HEADER;''',
+             '''with celdas as ( -- Creates a temporary table called cells with the following query as its data
         select cell_id,lon_site,lat_site,az,bw,RD_normal,
             st_setsrid(st_point(lon_site, lat_site), 4326) as center,
             -- Projects the coordinate in 10_000 meters in the azimuth + (h_beam_width / 2) direction
@@ -178,7 +182,6 @@ FROM 'D:\SharkTank\ManagementPlatform\mysite\static\\files\sage_lncel.csv' DELIM
     return HttpResponse('ok', content_type='text/plain')
 
 
-
 def draw_wcel(request):
     Sage_wcel.objects.all().delete()
     conn = psycopg2.connect(host=host,
@@ -188,10 +191,9 @@ def draw_wcel(request):
                             port="5432")
 
     c = conn.cursor()
-    query = ['DELETE FROM sage_wcel where 1=1',''' COPY sage_wcel(UARFCN,sitename,sitecode,name,LAT_SITE,LON_SITE,AZ,BW,RD,Expr1,BSC_RNC_MME_NAME,RNCId,WbtsId,LcrId,TE,TM,ALT,PriScrCode,LAC,RAC,rootSeqIndex,AdminCellState,WCelState) 
-FROM 'D:\SharkTank\ManagementPlatform\mysite\static\\files\sage_wcel.csv' DELIMITER ',' CSV HEADER;'''
-, 
-'''with celdas as ( -- Creates a temporary table called cells with the following query as its data
+    query = ['DELETE FROM sage_wcel where 1=1', ''' COPY sage_wcel(UARFCN,sitename,sitecode,name,LAT_SITE,LON_SITE,AZ,BW,RD,Expr1,BSC_RNC_MME_NAME,RNCId,WbtsId,LcrId,TE,TM,ALT,PriScrCode,LAC,RAC,rootSeqIndex,AdminCellState,WCelState) 
+FROM 'D:\SharkTank\ManagementPlatform\mysite\static\\files\sage_wcel.csv' DELIMITER ',' CSV HEADER;''',
+             '''with celdas as ( -- Creates a temporary table called cells with the following query as its data
         select lcrid,lon_site,lat_site,az,bw,rd,
             st_setsrid(st_point(lon_site, lat_site), 4326) as center,
             -- Projects the coordinate in 10_000 meters in the azimuth + (h_beam_width / 2) direction
@@ -261,11 +263,10 @@ def draw_bts(request):
                             port="5432")
 
     c = conn.cursor()
-    query = ['DELETE FROM sage_wcel',''' COPY sage_bts(band,cellname,lat_site,lon_site,az,bw,rd,cell_id,bscid,bsc_name,bcfid,btsid,trxid,initialfreq,preferredbcch,status,hoppingSequenceNumber1,bsIdentityCodeBCC,
+    query = ['DELETE FROM sage_wcel', ''' COPY sage_bts(band,cellname,lat_site,lon_site,az,bw,rd,cell_id,bscid,bsc_name,bcfid,btsid,trxid,initialfreq,preferredbcch,status,hoppingSequenceNumber1,bsIdentityCodeBCC,
 bsIdentityCodeNCC,bts_state,trx_state,LAC,rac,Refarming) 
-FROM 'D:\SharkTank\ManagementPlatform\mysite\static\\files\sage_bts.csv' DELIMITER ',' CSV HEADER;'''
-, 
-'''with celdas as ( -- Creates a temporary table called cells with the following query as its data
+FROM 'D:\SharkTank\ManagementPlatform\mysite\static\\files\sage_bts.csv' DELIMITER ',' CSV HEADER;''',
+             '''with celdas as ( -- Creates a temporary table called cells with the following query as its data
         select cell_id,lon_site,lat_site,az,bw,rd,
             st_setsrid(st_point(lon_site, lat_site), 4326) as center,
             -- Projects the coordinate in 10_000 meters in the azimuth + (h_beam_width / 2) direction
@@ -326,8 +327,6 @@ FROM 'D:\SharkTank\ManagementPlatform\mysite\static\\files\sage_bts.csv' DELIMIT
     return HttpResponse('ok', content_type='text/plain')
 
 
-
-
 def draw_2gta(request):
     conn = psycopg2.connect(host=host,
                             database=database,
@@ -337,16 +336,13 @@ def draw_2gta(request):
 
     c = conn.cursor()
     query = ['DROP TABLE IF EXISTS sage_2gta;',
-    ''' CREATE TABLE sage_2gta ( id serial NOT NULL, PERIOD_START_TIME	TEXT	, BSC_name	TEXT	, BCF_name	TEXT	, BTS_name	TEXT	, TA0	int	, TA1	int	, TA2	int	, TA3	int	, TA4	int	, TA5	int	, TA6	int	, TA7	int	, TA8	int	, TA9	int	, TA10	int	, TA11	int	, TA12	int	, TA13	int	, TA14	int	, TA15	int	, TA16	int	, TA17	int	, TA18	int	, TA19	int	, TA20	int	, TA21	int	, TA22	int	, TA23	int	, TA24	int	, TA25	int	, TA26	int	, TA27	int	, TA28	int	, TA29	int	, TA30	int	, TA31	int	, TA32	int	, TA33	int	, TA34	int	, TA35	int	, TA36	int	, TA37	int	, TA38	int	, TA39	int	, TA40	int	, TA41	int	, TA42	int	, TA43	int	, TA44	int	, TA45	int	, TA46	int	, TA47	int	, TA48	int	, TA49	int	, TA50	int	, TA51	int	, TA52	int	, TA53	int	, TA54	int	, TA55	int	, TA56	int	, TA57	int	, TA58	int	, TA59	int	, TA60	int	, TA61	int	, TA62	int	, TA63	
-    int);'''
-, 
-'''COPY sage_2gta(PERIOD_START_TIME,	BSC_name,	BCF_name,	BTS_name,TA0,	TA1,	TA2,	TA3,	TA4,	TA5,	TA6,	TA7,	TA8,	TA9,	TA10,	TA11,	TA12,	TA13,	TA14,	TA15,	TA16,	TA17,	TA18,	TA19,	TA20,	TA21,	TA22,	TA23,	TA24,	TA25,	TA26,	TA27,	TA28,	TA29,	TA30,	TA31,	TA32,	TA33,	TA34,	TA35,	TA36,	TA37,	TA38,	TA39,	TA40,	TA41,	TA42,	TA43,	TA44,	TA45,	TA46,	TA47,	TA48,	TA49,	TA50,	TA51,	TA52,	TA53,	TA54,	TA55,	TA56,	TA57,	TA58,	TA59,	TA60,	TA61,	TA62,	TA63
+             ''' CREATE TABLE sage_2gta ( id serial NOT NULL, PERIOD_START_TIME	TEXT	, BSC_name	TEXT	, BCF_name	TEXT	, BTS_name	TEXT	, TA0	int	, TA1	int	, TA2	int	, TA3	int	, TA4	int	, TA5	int	, TA6	int	, TA7	int	, TA8	int	, TA9	int	, TA10	int	, TA11	int	, TA12	int	, TA13	int	, TA14	int	, TA15	int	, TA16	int	, TA17	int	, TA18	int	, TA19	int	, TA20	int	, TA21	int	, TA22	int	, TA23	int	, TA24	int	, TA25	int	, TA26	int	, TA27	int	, TA28	int	, TA29	int	, TA30	int	, TA31	int	, TA32	int	, TA33	int	, TA34	int	, TA35	int	, TA36	int	, TA37	int	, TA38	int	, TA39	int	, TA40	int	, TA41	int	, TA42	int	, TA43	int	, TA44	int	, TA45	int	, TA46	int	, TA47	int	, TA48	int	, TA49	int	, TA50	int	, TA51	int	, TA52	int	, TA53	int	, TA54	int	, TA55	int	, TA56	int	, TA57	int	, TA58	int	, TA59	int	, TA60	int	, TA61	int	, TA62	int	, TA63	
+    int);''',
+             '''COPY sage_2gta(PERIOD_START_TIME,	BSC_name,	BCF_name,	BTS_name,TA0,	TA1,	TA2,	TA3,	TA4,	TA5,	TA6,	TA7,	TA8,	TA9,	TA10,	TA11,	TA12,	TA13,	TA14,	TA15,	TA16,	TA17,	TA18,	TA19,	TA20,	TA21,	TA22,	TA23,	TA24,	TA25,	TA26,	TA27,	TA28,	TA29,	TA30,	TA31,	TA32,	TA33,	TA34,	TA35,	TA36,	TA37,	TA38,	TA39,	TA40,	TA41,	TA42,	TA43,	TA44,	TA45,	TA46,	TA47,	TA48,	TA49,	TA50,	TA51,	TA52,	TA53,	TA54,	TA55,	TA56,	TA57,	TA58,	TA59,	TA60,	TA61,	TA62,	TA63
 ) 
-FROM 'D:\Proyecto_Visualizacion_PostgreSQL\Timing_Advance_2G\merged\\timing_total_2g.csv' DELIMITER ';' ;'''
-,
-''' DROP TABLE IF EXISTS sage_2gta_prach; '''
-,
-'''CREATE TABLE sage_2gta_prach
+FROM 'D:\Proyecto_Visualizacion_PostgreSQL\Timing_Advance_2G\merged\\timing_total_2g.csv' DELIMITER ';' ;''',
+             ''' DROP TABLE IF EXISTS sage_2gta_prach; ''',
+             '''CREATE TABLE sage_2gta_prach
 (
 id serial NOT NULL,
 dia text,
@@ -358,7 +354,7 @@ refarming TEXT,
 band smallint,
 initialfreq int,
 bin_geografico GEOMETRY
-); ''','''
+); ''', '''
 
 
 WITH bines as(
@@ -622,7 +618,7 @@ WITH bines as(
 INSERT INTO sage_2gta_prach(dia,bts_name,bin_TA,porcentaje,bin_geografico,cant,refarming,band,initialfreq )
 SELECT period_start_time,bts_name,0,porcentaje,bin_geografico,ta0,refarming,band,initialfreq FROM bines;'''
 
-]
+             ]
     for m in range(len(query)):
         print(query[m])
         c.execute(query[m], vars=None)

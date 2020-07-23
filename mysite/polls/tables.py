@@ -3,7 +3,7 @@ from .models import SageSites
 
 class SageSitesTable(tables.Table):
     
-    First_Tier= tables.TemplateColumn('<a style="color: #000000;cursor:pointer;text-decoration: underline;" onclick="viewFirstTier();">Tier1</a>')
+    First_Tier= tables.TemplateColumn('<a style="color: #000000;cursor:pointer;text-decoration: underline;" onclick="viewFirstTier(\'{{record.site_name}}\');">Tier1</a>')
     # record.(Model's column)
     First_Tier.orderable=False
     class Meta:

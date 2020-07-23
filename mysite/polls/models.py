@@ -87,6 +87,17 @@ class Sage_lncel(models.Model):
         return self.cellname
 
 
+class SageVoronoiPolygons(models.Model):
+    id = models.AutoField(primary_key=True)
+    intersecta = models.BooleanField(blank=True, null=True)
+    site_name = models.TextField(blank=True, null=True)
+    poligonos = models.GeometryField(srid=4326, blank=True, null=True)
+    objects = GeoManager()
+    
+    class Meta:
+        managed = False
+        db_table = 'sage_voronoi_polygons'
+
 
 class SageSites(models.Model):
     id = models.AutoField(primary_key=True)
@@ -103,8 +114,6 @@ class SageSites(models.Model):
         managed = True
         db_table = 'sage_sites'
 
-    def url_first_tier(self):
-        return "/get_first_tier/"+self.site_name
 
 
 class SageSitesFilter (django_filters.FilterSet):
