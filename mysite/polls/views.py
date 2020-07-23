@@ -44,8 +44,8 @@ def geojson_sage_lncel(request):
 
 
 def geojson_first_tier(request,site_same):
-	single_site_voronoi=SageVoronoiPolygons.objects.filter(site_name=site_same).values_list("poligonos")
-	json_first_tier = serialize('geojson',SageVoronoiPolygons.objects.filter(poligonos__intersects=single_site_voronoi),fields=["poligonos"])
+	single_site_voronoi=SageVoronoiPolygons.objects.filter(site_name=site_same).values_list("poligonos")[0]
+	json_first_tier = serialize('geojson',SageVoronoiPolygons.objects.filter(poligonos__intersects=single_site_voronoi).distinct())
 	return HttpResponse(json_first_tier,content_type="json")
 
 
