@@ -18,6 +18,33 @@
     integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
     crossorigin=""></script>
 
+<!-- Mouse position-->
+<link rel="stylesheet" href="{% static 'libs/L.Control.MousePosition.css' %}" />
+<script src="{% static 'libs/L.Control.MousePosition.js' %}"></script>
+
+<!-- GeoCoder-->
+<link rel="stylesheet" href="{% static 'libs/Control.OSMGeocoder.css' %}" />
+<script src="{% static 'libs/Control.OSMGeocoder.js' %}"></script>
+
+
+<!-- Navigation Bar-->
+<link rel="stylesheet" href="{% static 'libs/NavBar/NavBar.css' %}" />
+<script src="{% static 'libs/NavBar/NavBar.js' %}"></script>
+
+
+<!-- Slide menu-->
+<link rel="stylesheet" href="{% static 'libs/slide_menu/SlideMenu.css' %}" />
+<script src="{% static 'libs/slide_menu/SlideMenu.js' %}"></script>
+
+<!-- Draw-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
+
+
+<!-- Get Feature-->
+<script src="{% static 'libs/leaflet.wms.js' %}"></script>
+
+
 <style type="text/css">
     #map {
         width: 100%;
@@ -38,6 +65,8 @@
         </form>
         {% endif %}
         {% render_table table %}
+        
+
 
     </div>
 
@@ -58,6 +87,10 @@
 {% block javascript %}
 <script type="text/javascript">
 
+
+
+
+
     ///// Base Map
     var OpenStreetMap = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
     var WorldImagery = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
@@ -71,15 +104,29 @@
     });
 
 
-    function viewFirstTier(site_name){
+    function viewFirstTier(site_name) {
         //Ajax to retrieve data from Django
         var dataurl = '../geojson_first_tier/' + site_name;
         $.getJSON(dataurl, function (data) {
-            L.geoJson(data).addTo(map);
+
+
+            L.geoJson(data).setStyle({opacity: 0.2, fillOpacity: 0.2}).addTo(map);
+
+
             map.fitBounds(L.geoJson(data).getBounds());
             console.log(data);
         });
 
     };
+
+
+    //------------Adding from Geoserver (format WMS)
+
+    var sage_sites_wms = L.tileLayer.wms('http://localhost:8080/geoserver/sage/wms', {
+        layers: 'sage_sites:sage_sites',
+        transparent: true,
+        format: 'image/png',
+        zIndex: 10,
+    }).addTo(map);
 </script>
 {% endblock %}
