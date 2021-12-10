@@ -8,4 +8,4 @@ Techonologies used
 -Postgres+PostGIS
 -Linux
 
-https://github.com/AbelardoDV/sage/blob/master/explanation/Slide1.PNG
+![myimage-alt-tag](https://github.com/AbelardoDV/sage/blob/master/explanation/Slide1.PNG)
