@@ -1,12 +1,13 @@
 # SAGE
+<br/>
 was Intented to be an An open-source tool for 
-Network planning and Optimization.
-Techonologies used
--Django
--Python
--Javascript
--Postgres+PostGIS
--Linux
+Network planning and Optimization.<br/>
+Techonologies used:<br/>
+-Django<br/>
+-Python<br/>
+-Javascript<br/>
+-Postgres+PostGIS<br/>
+-Linux<br/>
 
 ![myimage-alt-tag](https://github.com/AbelardoDV/sage/blob/master/explanation/Slide9.PNG)
 
