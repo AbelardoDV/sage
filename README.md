@@ -13,6 +13,8 @@ Techonologies used:<br/>
 
 ![myimage-alt-tag](https://github.com/AbelardoDV/sage/blob/master/explanation/Slide5.PNG)
 
+![myimage-alt-tag](https://github.com/AbelardoDV/sage/blob/master/explanation/image8.jpeg)
+
 ![myimage-alt-tag](https://github.com/AbelardoDV/sage/blob/master/explanation/Slide8.PNG)
 
 ![myimage-alt-tag](https://github.com/AbelardoDV/sage/blob/master/explanation/Slide7.PNG)
